@@ -6,6 +6,6 @@ A plataforma vai possuir quatro botões para o usuário interagir, uma tela para
 
 # Bibliotecas
 
-**Copiar** a pasta "Arduino" e colar dentro da pasta "Meus Documentos" no Windows. **Não delete a pasta.**
+**Copiar** a pasta "Arduino" e colar dentro da pasta "Meus Documentos" no Windows. **Não delete ou mova a pasta.**
 
 ---
