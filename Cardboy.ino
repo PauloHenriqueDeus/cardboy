@@ -40,6 +40,8 @@ float currentTime = 0;
 float lastTime = 0;
 float deltaTime = 0;
 
+const int buttonPin[4] = {2, 3, 4, 5}; //up, down, left, right
+
 void drawError()
 {
   display.setTextSize(2);
@@ -131,6 +133,10 @@ void prepareScene()
 void setup() 
 {
   Serial.begin(9600);
+
+  for (int i = 0; i < 4; i++){
+    pinMode(buttonPin[i], INPUT);
+  }
   
   display.begin();
   display.setContrast(50);
@@ -168,7 +174,7 @@ void loop()
   currentTime = millis();
   deltaTime = (currentTime - lastTime)/1000;
   prepareScene();
-
+  
   display.display();
 }
 
@@ -187,10 +193,10 @@ void pong() {
   //movimentos  
 
   //player
-  if (GetButtonPress("Up"){
+  if (GetButtonPress("Up")){
     players[0]-= 10 * deltaTime;
   }
-  else if (GetButtonPress("Up"){
+  else if (GetButtonPress("Up")){
     players[0]+= 10 * deltaTime;
   }
 
@@ -244,7 +250,20 @@ void pong() {
   //Serial.println(ball.y);
 }
 
-bool GetButtonPress(){
-  
+bool GetButtonPress(String key){
+  if (key == "Up"){
+    return digitalRead(buttonPin[0]);
+  }
+  else if (key == "Down"){
+    return digitalRead(buttonPin[1]);
+  }
+  else if (key == "Left"){
+    return digitalRead(buttonPin[2]);
+  }
+  else if (key == "Right"){
+    return digitalRead(buttonPin[3]);
+  }
+
+  return false;
 }
 
