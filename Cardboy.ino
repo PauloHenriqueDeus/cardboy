@@ -31,7 +31,8 @@ enum state
   MAIN_MENU = 1,
   SNAKE = 2,
   PONG = 3,
-  BREAKOUT = 4
+  BREAKOUT = 4,
+  ENDGAME = 5
 };
 
 state current = INITIALIZING;
@@ -41,6 +42,7 @@ float lastTime = 0;
 float deltaTime = 0;
 
 const int buttonPin[4] = {2, 3, 4, 5}; //up, down, left, right
+String endGameFeedback = "";
 
 void drawError()
 {
@@ -86,6 +88,19 @@ void drawMainMenu()
   display.println("BREAKOUT");
 }
 
+void drawEndScreen()
+{
+  display.setTextSize(1);
+  display.setCursor(0, 6);
+  display.println(endGameFeedback);
+
+  delay(3000);
+
+  if (GetButtonPress("Any")){
+    current = PONG;
+  }
+}
+
 void prepareScene()
 {
   /*
@@ -123,6 +138,11 @@ void prepareScene()
       break;
     }
     case 4:
+    {
+      
+      break;
+    }
+    case 5:
     {
       
       break;
@@ -206,11 +226,15 @@ void pong() {
   //colisões
   if (ball.x > 82){
     //player 1 ponto
+    endGameFeedback = "You win!";
+    current = ENDGAME;
     right = false;
   }
 
   if (ball.x < 2){
     //player 2 ponto
+    endGameFeedback = "You lose!";
+    current = ENDGAME;
     right = true;
   }
 
@@ -262,6 +286,14 @@ bool GetButtonPress(String key){
   }
   else if (key == "Right"){
     return digitalRead(buttonPin[3]);
+  }
+
+  if (key == "Any"){
+    for (int i = 0; i < 4; i++){
+      if (digitalRead(buttonPin[i])){
+        return true;
+      }
+    }
   }
 
   return false;
