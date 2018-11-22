@@ -49,16 +49,29 @@ String endGameFeedback = "";
 coord ball = coord(42, 24);
 float players[2] = {24-48/4/2, 24-48/4/2};
 
+coord ballDir = coord(1, 0);
+
 bool right = true;
 bool up = true;
 
 bool endedGame = false;
+
+coord RotateVector(coord vector, float graus){
+  float ang = 0.0174533f * graus;
+    
+  float x = cos(ang) * vector.x - sin(ang) * vector.y;
+  float y = sin(ang) * vector.x + cos(ang) * vector.y;
+  
+  return coord(x, y);
+}
 
 void InitPong(){
     ball = coord(42, 12 + (rand() % 24));
     
     players[0] = 24-48/4/2;
     players[1] = 24-48/4/2;
+
+    ballDir = RotateVector(coord(1, 0), 45);
  
     right = round(rand()%2);
     up = round(rand()%2);
@@ -235,17 +248,43 @@ void loop()
   deltaTime = (currentTime - lastTime)/1000;
   prepareScene();
 
-  Serial.println(rand());
+  //Serial.println(rand());
   
   display.display();
 }
 
 /* --------------------------------------------------------- */
 
+coord Bounce(coord vector, coord normal, float delta){
+
+  bool wall = sqrt(pow(delta, 2)) > 5;
+
+  if (wall){
+    coord rin = coord(-vector.x, -vector.y);
+
+    float cos1 = normal.x * rin.x + normal.y * rin.y;
+    return coord(2 * normal.x * cos1 - rin.x, 2 * normal.y * cos1 - rin.y);
+  }
+
+  float ang = -90 * delta;
+  int I = ang >= 0 ? 1 : -1;
+  float Iang = sqrt(pow(ang, 2));
+
+  ang = I * max(Iang, 22.5f);
+  ang = I * min(Iang, 67.5f);
+
+  Serial.println(ang);
+  Serial.println(I);
+  Serial.println(Iang);
+  
+  return RotateVector(normal, ang);
+}
 
 void pong() { 
-  ball.x += ((right?1:-1) * 20) * deltaTime;
-  ball.y += ((up?1:-1) * 20) * deltaTime;
+  //ball.x += ((right?1:-1) * 20) * deltaTime;
+  //ball.y += ((up?1:-1) * 20) * deltaTime;
+  ball.x += (ballDir.x * 20) * deltaTime;
+  ball.y += (ballDir.y * 20) * deltaTime;
 
   //movimentos  
 
@@ -280,22 +319,25 @@ void pong() {
   }
 
   if (ball.y > 46){
-    up = false;
+    ballDir = Bounce(ballDir, coord(0, -1), 10);
   }
   else if (ball.y < 2){
-    up = true;
+    ballDir = Bounce(ballDir, coord(0, 1), 10);
   }
 
+  //bola colide dentro da parede -> dot
   //players
   if (ball.x < 6){
+    
     if (ball.y > players[0] && ball.y < players[0] + 48/4){
-      right = true;
+      ballDir = Bounce(ballDir, coord(1, 0), 1 + ((players[0] - ball.y)/12)*2);
     }
   }
   
   if (ball.x > 84-6){
+    
     if (ball.y > players[1] && ball.y < players[1] + 48/4){
-      right = false;
+      ballDir = Bounce(ballDir, coord(-1, 0), -(1 + ((players[1] - ball.y)/12)*2));
     }
   } 
   
@@ -313,7 +355,7 @@ void pong() {
   
   display.fillCircle(ball.x, ball.y, 2, 1);
 
-  Serial.println(ball.x);
+  //Serial.println(ball.x);
   //Serial.println(ball.y);
 }
 
