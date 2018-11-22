@@ -268,14 +268,13 @@ coord Bounce(coord vector, coord normal, float delta){
 
   float ang = -90 * delta;
   int I = ang >= 0 ? 1 : -1;
-  float Iang = sqrt(pow(ang, 2));
 
-  ang = I * max(Iang, 22.5f);
-  ang = I * min(Iang, 67.5f);
+  ang = I * max(sqrt(pow(ang, 2)), 22.5f);
+  ang = I * min(sqrt(pow(ang, 2)), 67.5f);
 
   Serial.println(ang);
   Serial.println(I);
-  Serial.println(Iang);
+  Serial.println(sqrt(pow(ang, 2)));
   
   return RotateVector(normal, ang);
 }
