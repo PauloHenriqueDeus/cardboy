@@ -45,6 +45,10 @@ float deltaTime = 0;
 const int buttonPin[4] = {2, 3, 4, 5}; //up, down, left, right
 String endGameFeedback = "";
 
+//main menu
+bool pressClear = false;
+int sel = 0;
+
 //pong
 coord ball = coord(42, 24);
 float players[2] = {24-48/4/2, 24-48/4/2};
@@ -128,7 +132,35 @@ void drawMainMenu()
   display.setCursor(15,35);
   display.println("BREAKOUT");
 
-  
+  display.fillCircle(10, 18 + 10*sel, 2, BLACK);
+
+  if(GetButtonPress("Down"))
+  {
+    if(pressClear)
+    {
+      sel = (sel + 1) % 3;
+      pressClear = false;
+    }
+  }
+  else if(GetButtonPress("Up"))
+  {
+    if(sel == 0) // snake
+    {
+      
+    }
+    else if(sel == 1) // pong
+    {
+      InitPong();
+    }
+    else // breakout
+    {
+      
+    }
+  }
+  else
+  {
+    pressClear = true;
+  }
 }
 
 void drawEndScreen()
@@ -382,4 +414,3 @@ bool GetButtonPress(String key){
 
   return false;
 }
-
